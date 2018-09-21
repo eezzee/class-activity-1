@@ -1,0 +1,28 @@
+---
+title: "class-activity-1"
+author: "Elliot Hu-Au"
+date: "September 20, 2018"
+output: html_document
+---
+
+
+```{r}
+install.packages("tidyr")
+library(tidyr)
+install.packages("dplyr")
+library(dplyr)
+DF1<-read.csv("swirl-data.csv", header=TRUE)
+DF2<-dplyr::select(DF1,hash,lesson_name,attempt)
+DF3<-DF2 %>% group_by(hash,lesson_name) %>% summarize(attempt=sum(attempt))
+DF3<- tidyr::spread(DF3,lesson_name, attempt)
+DF4<-dplyr::select(DF1,hash,correct)
+DF4$correct<- as.integer(as.logical(DF4$correct))
+
+DF5<-DF4 %>%group_by(hash) %>% summarise_all(funs(sum), na.rm=TRUE)
+
+counter<-count(DF4,hash)
+
+DF6<- c(counter$n)
+
+DF5$correct<-DF5$correct / DF6
+
